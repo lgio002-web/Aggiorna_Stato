@@ -639,7 +639,11 @@ def evidenzia_righe(row: pd.Series):
 
 
 def sezione_read(df: pd.DataFrame):
-    """READ: tabella globale con filtri di ricerca e formattazione condizionale."""
+    """READ + EDIT: tabella globale editabile con filtri e salvataggio su DB.
+
+    Tutti i campi sono modificabili direttamente nella tabella (tranne l'ID,
+    che identifica il record). Le modifiche vengono salvate nel database
+    premendo il pulsante 'Salva modifiche'."""
     st.markdown('<div class="section-title">Elenco Certificazioni</div>', unsafe_allow_html=True)
 
     # Filtri rapidi in cima.
@@ -668,25 +672,75 @@ def sezione_read(df: pd.DataFrame):
         st.info("Nessun record corrisponde ai criteri di ricerca selezionati.")
         return
 
-    # Rinominazione colonne per una visualizzazione piu' leggibile.
-    df_view = df_filtrato.rename(
-        columns={
-            "id": "ID",
-            "sistema": "Sistema",
-            "iniziativa": "Iniziativa",
-            "data_inizio_certificazione": "Inizio Cert.",
-            "data_fine_certificazione": "Fine Cert.",
-            "data_consegna_kit": "Consegna Kit",
-            "stato_sts": "Stato STS",
-            "note": "Note",
-        }
+    st.caption(
+        "✏️ Modifica direttamente le celle della tabella, poi premi "
+        "**Salva modifiche** per aggiornare il database."
     )
 
-    # Applica la formattazione condizionale sulle righe.
-    styler = df_view.style.apply(evidenzia_righe, axis=1)
+    # Tabella completamente editabile (tutti i campi tranne l'ID).
+    df_edit = df_filtrato.reset_index(drop=True)
+    tabella_modificata = st.data_editor(
+        df_edit,
+        use_container_width=True,
+        hide_index=True,
+        height=430,
+        num_rows="fixed",
+        key="editor_certificazioni",
+        column_config={
+            "id": st.column_config.NumberColumn("ID", disabled=True, width="small"),
+            "sistema": st.column_config.TextColumn("Sistema", required=True),
+            "iniziativa": st.column_config.TextColumn("Iniziativa"),
+            "data_inizio_certificazione": st.column_config.TextColumn(
+                "Inizio Cert.", help="Formato AAAA-MM-GG o testo"
+            ),
+            "data_fine_certificazione": st.column_config.TextColumn(
+                "Fine Cert.", help="Formato AAAA-MM-GG o testo"
+            ),
+            "data_consegna_kit": st.column_config.TextColumn(
+                "Consegna Kit", help="Data (AAAA-MM-GG) o testo (es. 'Kit non consegnato')"
+            ),
+            "stato_sts": st.column_config.SelectboxColumn(
+                "Stato STS", options=STATI_STS
+            ),
+            "note": st.column_config.TextColumn("Note"),
+        },
+    )
 
-    st.dataframe(styler, use_container_width=True, hide_index=True, height=430)
-    st.caption(f"Visualizzati {len(df_filtrato)} di {len(df)} sistemi totali.")
+    col_save, col_info = st.columns([1, 3])
+    with col_save:
+        if st.button("💾 Salva modifiche", type="primary"):
+            n_aggiornati = salva_modifiche_tabella(df_edit, tabella_modificata)
+            if n_aggiornati:
+                st.success(f"{n_aggiornati} record aggiornati con successo.")
+                st.rerun()
+            else:
+                st.info("Nessuna modifica da salvare.")
+    with col_info:
+        st.caption(f"Visualizzati {len(df_filtrato)} di {len(df)} sistemi totali.")
+
+
+def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFrame) -> int:
+    """Confronta la tabella originale con quella modificata e aggiorna i record
+    cambiati nel database. Restituisce il numero di record aggiornati."""
+    campi = [
+        "sistema",
+        "iniziativa",
+        "data_inizio_certificazione",
+        "data_fine_certificazione",
+        "data_consegna_kit",
+        "stato_sts",
+        "note",
+    ]
+    n_aggiornati = 0
+    for i in range(len(df_modificato)):
+        riga_new = df_modificato.iloc[i]
+        riga_old = df_originale.iloc[i]
+        # Aggiorna solo se almeno un campo e' cambiato.
+        if any(str(riga_new[c]) != str(riga_old[c]) for c in campi):
+            dati = {c: ("" if pd.isna(riga_new[c]) else str(riga_new[c])) for c in campi}
+            aggiorna_sistema(int(riga_new["id"]), dati)
+            n_aggiornati += 1
+    return n_aggiornati
 
 
 def sezione_create():
