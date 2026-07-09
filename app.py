@@ -51,190 +51,9 @@ STATI_KIT = [
     "ND",
 ]
 
-# Dati di mockup iniziali (usati solo al primo avvio con DB vuoto).
-# Dati reali forniti: date nel formato GG-MM-AAAA.
-DATI_MOCKUP = [
-    {
-        "sistema": "Corriere Espresso",
-        "iniziativa": "143248, 141780, 143247",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "Kit non consegnato",
-        "stato_sts": "In Esecuzione",
-        "note": "",
-    },
-    {
-        "sistema": "GPL Routing",
-        "iniziativa": "141696",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "Kit non consegnato",
-        "stato_sts": "In Esecuzione",
-        "note": "",
-    },
-    {
-        "sistema": "Mediation",
-        "iniziativa": "141780",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "09-07-2026",
-        "stato_sts": "In Esecuzione",
-        "note": "",
-    },
-    {
-        "sistema": "MLP - Servizi di backend MLP MLC",
-        "iniziativa": "141708, 141696",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "No Certificazione BE",
-        "stato_sts": "In Esecuzione",
-        "note": "141696 In Esecuzione; No Certificazione BE",
-    },
-    {
-        "sistema": "Seguimi 2",
-        "iniziativa": "143999",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "Kit non consegnato",
-        "stato_sts": "",
-        "note": "Ripianificato",
-    },
-    {
-        "sistema": "ROAD",
-        "iniziativa": "141646",
-        "data_inizio_certificazione": "06-07-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "Kit non consegnato",
-        "stato_sts": "ND",
-        "note": "Iniziativa Semplice",
-    },
-    {
-        "sistema": "TTREPO",
-        "iniziativa": "143248",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "29-06-2026",
-        "stato_sts": "In Esecuzione",
-        "note": "",
-    },
-    {
-        "sistema": "GME SFI",
-        "iniziativa": "144286",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "22-06-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "GME MEP",
-        "iniziativa": "142430, 144286",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "23-06-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "MLP APP MLC",
-        "iniziativa": "142230, 141708, 144011, 141696, 143248",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "30-06-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "MLP - Servizi di backend MLP SDA",
-        "iniziativa": "141780",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "30-06-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "T&T SDA",
-        "iniziativa": "141780, 143248",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "02-07-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "Click&Collect",
-        "iniziativa": "141696",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "06-07-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "SAP HANA",
-        "iniziativa": "142230",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "06-07-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "BEP",
-        "iniziativa": "141780",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "07-07-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "MLP - APP SDA",
-        "iniziativa": "141780, 143248",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "07-07-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "NPSO",
-        "iniziativa": "138512",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "07-07-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "T&T 2.0",
-        "iniziativa": "138512, 141696, 144248, 141780, 142230, 143248",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "09-07-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "T&T OLD",
-        "iniziativa": "138512, 141780, 142230, 143248",
-        "data_inizio_certificazione": "22-06-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "09-07-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-    {
-        "sistema": "GEOPLUS",
-        "iniziativa": "141646",
-        "data_inizio_certificazione": "06-07-2026",
-        "data_fine_certificazione": "10-07-2026",
-        "data_consegna_kit": "09-07-2026",
-        "stato_sts": "",
-        "note": "",
-    },
-]
+# Dati di mockup iniziali: vuoti. Il database NON viene piu' precaricato con
+# dati di esempio; conserva solo i record realmente inseriti dall'utente.
+DATI_MOCKUP = []
 
 
 # ============================================================================
@@ -740,9 +559,9 @@ def sezione_read(df: pd.DataFrame):
         height=430,
         num_rows="dynamic",
         key=f"editor_certificazioni_{st.session_state.editor_rev}",
-        # column_order esclude 'id' e mette lo Stato (automatico) in fondo,
-        # cosi' la compilazione di una nuova riga parte dal campo 'Sistema'.
+        # column_order esclude 'id' e mette lo Stato come prima colonna.
         column_order=[
+            "stato_visivo",
             "sistema",
             "iniziativa",
             "data_inizio_certificazione",
@@ -750,7 +569,6 @@ def sezione_read(df: pd.DataFrame):
             "data_consegna_kit",
             "stato_sts",
             "note",
-            "stato_visivo",
         ],
         column_config={
             "stato_visivo": st.column_config.SelectboxColumn(
@@ -775,10 +593,10 @@ def sezione_read(df: pd.DataFrame):
         },
     )
 
-    # Salvataggio automatico: appena una cella o una riga viene modificata,
-    # la variazione viene subito scritta nel database.
-    n_agg, n_new = salva_modifiche_tabella(df_edit, tabella_modificata)
-    if n_agg or n_new:
+    # Salvataggio automatico: appena una cella o una riga viene modificata
+    # (o eliminata), la variazione viene subito scritta nel database.
+    n_agg, n_new, n_del = salva_modifiche_tabella(df_edit, tabella_modificata)
+    if n_agg or n_new or n_del:
         st.session_state.editor_rev += 1
         st.rerun()
 
@@ -793,7 +611,8 @@ def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFr
 
     - Le righe esistenti (con ID) vengono aggiornate se cambiate.
     - Le righe nuove (senza ID, aggiunte dall'utente) vengono inserite.
-    Restituisce una tupla (n_aggiornati, n_nuovi)."""
+    - Le righe rimosse dalla tabella vengono eliminate definitivamente dal DB.
+    Restituisce una tupla (n_aggiornati, n_nuovi, n_eliminati)."""
     campi = [
         "sistema",
         "iniziativa",
@@ -812,6 +631,7 @@ def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFr
 
     n_aggiornati = 0
     n_nuovi = 0
+    id_presenti = set()
     for _, riga in df_modificato.iterrows():
         rid = riga.get("id")
         dati = {c: ("" if pd.isna(riga.get(c)) else str(riga.get(c))) for c in campi}
@@ -824,6 +644,7 @@ def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFr
                 inserisci_sistema(dati)
                 n_nuovi += 1
         else:
+            id_presenti.add(int(rid))
             # Riga esistente: aggiorna se un campo o la classificazione sono cambiati.
             riga_old = orig_by_id.get(int(rid))
             if riga_old is not None and any(
@@ -831,7 +652,16 @@ def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFr
             ):
                 aggiorna_sistema(int(rid), dati)
                 n_aggiornati += 1
-    return n_aggiornati, n_nuovi
+
+    # Cancellazione definitiva: gli ID presenti in origine ma non piu' nella
+    # tabella modificata (righe rimosse dall'utente) vengono eliminati dal DB.
+    n_eliminati = 0
+    for rid_orig in orig_by_id:
+        if rid_orig not in id_presenti:
+            elimina_sistema(rid_orig)
+            n_eliminati += 1
+
+    return n_aggiornati, n_nuovi, n_eliminati
 
 
 def sezione_create():
@@ -1011,18 +841,6 @@ def main():
     with st.sidebar:
         st.metric("Record nel Database", len(df))
         st.caption(f"Database: `{os.path.basename(DB_PATH)}`")
-
-        st.divider()
-        st.markdown("**Ripristino dati**")
-        st.caption(
-            "Riporta il database all'elenco iniziale completo "
-            f"({len(DATI_MOCKUP)} sistemi), scartando le modifiche."
-        )
-        conferma_reset = st.checkbox("Confermo il ripristino completo")
-        if st.button("🔄 Ripristina elenco iniziale", disabled=not conferma_reset):
-            ripristina_dati_iniziali()
-            st.success(f"Database ripristinato con {len(DATI_MOCKUP)} sistemi.")
-            st.rerun()
 
     # --- Tabs principali per il CRUD ---
     tab_read, tab_create, tab_update, tab_delete = st.tabs(
