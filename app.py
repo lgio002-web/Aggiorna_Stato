@@ -689,7 +689,8 @@ def sezione_read(df: pd.DataFrame):
 
     st.caption(
         "✏️ Modifica le celle **oppure aggiungi nuove righe** con il pulsante **+** "
-        "in fondo alla tabella, poi premi **Salva modifiche** per aggiornare il database."
+        "in fondo alla tabella, poi premi **Salva modifiche** per aggiornare il database. "
+        "La colonna **Stato** (🔴/🟢) è automatica: compare da sola dopo il salvataggio."
     )
 
     # Tabella completamente editabile (tutti i campi tranne l'ID, che resta
@@ -715,9 +716,9 @@ def sezione_read(df: pd.DataFrame):
         height=430,
         num_rows="dynamic",
         key="editor_certificazioni",
-        # column_order esclude 'id' dalla visualizzazione (resta nel DataFrame).
+        # column_order esclude 'id' e mette lo Stato (automatico) in fondo,
+        # cosi' la compilazione di una nuova riga parte dal campo 'Sistema'.
         column_order=[
-            "stato_visivo",
             "sistema",
             "iniziativa",
             "data_inizio_certificazione",
@@ -725,6 +726,7 @@ def sezione_read(df: pd.DataFrame):
             "data_consegna_kit",
             "stato_sts",
             "note",
+            "stato_visivo",
         ],
         column_config={
             "stato_visivo": st.column_config.TextColumn(
