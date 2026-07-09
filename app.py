@@ -301,6 +301,38 @@ def init_db():
     conn.close()
 
 
+def ripristina_dati_iniziali():
+    """Svuota completamente la tabella e ricarica TUTTI i dati di DATI_MOCKUP.
+
+    Utile per riportare il database esattamente all'elenco iniziale (Excel),
+    scartando eventuali modifiche apportate tramite l'interfaccia."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM sistemi")
+    # Azzera anche il contatore degli id per ripartire da 1.
+    cur.execute("DELETE FROM sqlite_sequence WHERE name = 'sistemi'")
+    for riga in DATI_MOCKUP:
+        cur.execute(
+            """
+            INSERT INTO sistemi
+                (sistema, iniziativa, data_inizio_certificazione,
+                 data_fine_certificazione, data_consegna_kit, stato_sts, note)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                riga["sistema"],
+                riga["iniziativa"],
+                riga["data_inizio_certificazione"],
+                riga["data_fine_certificazione"],
+                riga["data_consegna_kit"],
+                riga["stato_sts"],
+                riga["note"],
+            ),
+        )
+    conn.commit()
+    conn.close()
+
+
 def leggi_sistemi():
     """READ: legge tutti i record dalla tabella e li restituisce come DataFrame."""
     conn = get_connection()
@@ -848,6 +880,18 @@ def main():
         st.divider()
         st.metric("Record nel Database", len(df))
         st.caption(f"Database: `{os.path.basename(DB_PATH)}`")
+
+        st.divider()
+        st.markdown("**Ripristino dati**")
+        st.caption(
+            "Riporta il database all'elenco iniziale completo "
+            f"({len(DATI_MOCKUP)} sistemi), scartando le modifiche."
+        )
+        conferma_reset = st.checkbox("Confermo il ripristino completo")
+        if st.button("🔄 Ripristina elenco iniziale", disabled=not conferma_reset):
+            ripristina_dati_iniziali()
+            st.success(f"Database ripristinato con {len(DATI_MOCKUP)} sistemi.")
+            st.rerun()
 
     # --- Tabs principali per il CRUD ---
     tab_read, tab_create, tab_update, tab_delete = st.tabs(
