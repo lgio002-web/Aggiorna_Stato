@@ -52,13 +52,13 @@ STATI_KIT = [
 ]
 
 # Dati di mockup iniziali (usati solo al primo avvio con DB vuoto).
-# Dati reali forniti: date convertite da GG/MM/AAAA a AAAA-MM-GG.
+# Dati reali forniti: date nel formato GG-MM-AAAA.
 DATI_MOCKUP = [
     {
         "sistema": "Corriere Espresso",
         "iniziativa": "143248, 141780, 143247",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
         "data_consegna_kit": "Kit non consegnato",
         "stato_sts": "In Esecuzione",
         "note": "",
@@ -66,8 +66,8 @@ DATI_MOCKUP = [
     {
         "sistema": "GPL Routing",
         "iniziativa": "141696",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
         "data_consegna_kit": "Kit non consegnato",
         "stato_sts": "In Esecuzione",
         "note": "",
@@ -75,17 +75,17 @@ DATI_MOCKUP = [
     {
         "sistema": "Mediation",
         "iniziativa": "141780",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-09",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "09-07-2026",
         "stato_sts": "In Esecuzione",
         "note": "",
     },
     {
         "sistema": "MLP - Servizi di backend MLP MLC",
         "iniziativa": "141708, 141696",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
         "data_consegna_kit": "No Certificazione BE",
         "stato_sts": "In Esecuzione",
         "note": "141696 In Esecuzione; No Certificazione BE",
@@ -93,8 +93,8 @@ DATI_MOCKUP = [
     {
         "sistema": "Seguimi 2",
         "iniziativa": "143999",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
         "data_consegna_kit": "Kit non consegnato",
         "stato_sts": "",
         "note": "Ripianificato",
@@ -102,8 +102,8 @@ DATI_MOCKUP = [
     {
         "sistema": "ROAD",
         "iniziativa": "141646",
-        "data_inizio_certificazione": "2026-07-06",
-        "data_fine_certificazione": "2026-07-10",
+        "data_inizio_certificazione": "06-07-2026",
+        "data_fine_certificazione": "10-07-2026",
         "data_consegna_kit": "Kit non consegnato",
         "stato_sts": "ND",
         "note": "Iniziativa Semplice",
@@ -111,126 +111,126 @@ DATI_MOCKUP = [
     {
         "sistema": "TTREPO",
         "iniziativa": "143248",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-06-29",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "29-06-2026",
         "stato_sts": "In Esecuzione",
         "note": "",
     },
     {
         "sistema": "GME SFI",
         "iniziativa": "144286",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-06-22",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "22-06-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "GME MEP",
         "iniziativa": "142430, 144286",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-06-23",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "23-06-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "MLP APP MLC",
         "iniziativa": "142230, 141708, 144011, 141696, 143248",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-06-30",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "30-06-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "MLP - Servizi di backend MLP SDA",
         "iniziativa": "141780",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-06-30",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "30-06-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "T&T SDA",
         "iniziativa": "141780, 143248",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-02",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "02-07-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "Click&Collect",
         "iniziativa": "141696",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-06",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "06-07-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "SAP HANA",
         "iniziativa": "142230",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-06",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "06-07-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "BEP",
         "iniziativa": "141780",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-07",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "07-07-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "MLP - APP SDA",
         "iniziativa": "141780, 143248",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-07",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "07-07-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "NPSO",
         "iniziativa": "138512",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-07",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "07-07-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "T&T 2.0",
         "iniziativa": "138512, 141696, 144248, 141780, 142230, 143248",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-09",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "09-07-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "T&T OLD",
         "iniziativa": "138512, 141780, 142230, 143248",
-        "data_inizio_certificazione": "2026-06-22",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-09",
+        "data_inizio_certificazione": "22-06-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "09-07-2026",
         "stato_sts": "",
         "note": "",
     },
     {
         "sistema": "GEOPLUS",
         "iniziativa": "141646",
-        "data_inizio_certificazione": "2026-07-06",
-        "data_fine_certificazione": "2026-07-10",
-        "data_consegna_kit": "2026-07-09",
+        "data_inizio_certificazione": "06-07-2026",
+        "data_fine_certificazione": "10-07-2026",
+        "data_consegna_kit": "09-07-2026",
         "stato_sts": "",
         "note": "",
     },
@@ -269,11 +269,19 @@ def init_db():
             data_fine_certificazione    TEXT,
             data_consegna_kit           TEXT,
             stato_sts                   TEXT,
-            note                        TEXT
+            note                        TEXT,
+            classificazione             TEXT DEFAULT ''
         )
         """
     )
     conn.commit()
+
+    # Migrazione: aggiunge la colonna 'classificazione' ai DB gia' esistenti.
+    cur.execute("PRAGMA table_info(sistemi)")
+    colonne = [r["name"] for r in cur.fetchall()]
+    if "classificazione" not in colonne:
+        cur.execute("ALTER TABLE sistemi ADD COLUMN classificazione TEXT DEFAULT ''")
+        conn.commit()
 
     # Popolamento iniziale con i dati di mockup se la tabella e' vuota.
     cur.execute("SELECT COUNT(*) AS n FROM sistemi")
@@ -283,8 +291,9 @@ def init_db():
                 """
                 INSERT INTO sistemi
                     (sistema, iniziativa, data_inizio_certificazione,
-                     data_fine_certificazione, data_consegna_kit, stato_sts, note)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                     data_fine_certificazione, data_consegna_kit, stato_sts,
+                     note, classificazione)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     riga["sistema"],
@@ -294,6 +303,7 @@ def init_db():
                     riga["data_consegna_kit"],
                     riga["stato_sts"],
                     riga["note"],
+                    riga.get("classificazione", ""),
                 ),
             )
         conn.commit()
@@ -316,8 +326,9 @@ def ripristina_dati_iniziali():
             """
             INSERT INTO sistemi
                 (sistema, iniziativa, data_inizio_certificazione,
-                 data_fine_certificazione, data_consegna_kit, stato_sts, note)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+                 data_fine_certificazione, data_consegna_kit, stato_sts,
+                 note, classificazione)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 riga["sistema"],
@@ -327,6 +338,7 @@ def ripristina_dati_iniziali():
                 riga["data_consegna_kit"],
                 riga["stato_sts"],
                 riga["note"],
+                riga.get("classificazione", ""),
             ),
         )
     conn.commit()
@@ -349,8 +361,9 @@ def inserisci_sistema(dati: dict):
         """
         INSERT INTO sistemi
             (sistema, iniziativa, data_inizio_certificazione,
-             data_fine_certificazione, data_consegna_kit, stato_sts, note)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+             data_fine_certificazione, data_consegna_kit, stato_sts,
+             note, classificazione)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             dati["sistema"],
@@ -360,6 +373,7 @@ def inserisci_sistema(dati: dict):
             dati["data_consegna_kit"],
             dati["stato_sts"],
             dati["note"],
+            dati.get("classificazione", ""),
         ),
     )
     conn.commit()
@@ -379,7 +393,8 @@ def aggiorna_sistema(record_id: int, dati: dict):
             data_fine_certificazione = ?,
             data_consegna_kit = ?,
             stato_sts = ?,
-            note = ?
+            note = ?,
+            classificazione = ?
         WHERE id = ?
         """,
         (
@@ -390,6 +405,7 @@ def aggiorna_sistema(record_id: int, dati: dict):
             dati["data_consegna_kit"],
             dati["stato_sts"],
             dati["note"],
+            dati.get("classificazione", ""),
             record_id,
         ),
     )
@@ -411,16 +427,19 @@ def elimina_sistema(record_id: int):
 # ============================================================================
 
 def parse_data(valore: str):
-    """Prova a convertire una stringa in oggetto date (formato YYYY-MM-DD).
+    """Prova a convertire una stringa in oggetto date.
 
+    Accetta sia il formato GG-MM-AAAA sia YYYY-MM-DD (per compatibilita').
     Restituisce un oggetto date se possibile, altrimenti None (utile per
     gestire valori testuali come 'Kit non consegnato')."""
     if not valore:
         return None
-    try:
-        return datetime.strptime(str(valore).strip(), "%Y-%m-%d").date()
-    except (ValueError, TypeError):
-        return None
+    for fmt in ("%d-%m-%Y", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(str(valore).strip(), fmt).date()
+        except (ValueError, TypeError):
+            continue
+    return None
 
 
 def is_valore_critico(valore: str) -> bool:
@@ -690,24 +709,24 @@ def sezione_read(df: pd.DataFrame):
     st.caption(
         "✏️ Modifica le celle **oppure aggiungi nuove righe** con il pulsante **+** "
         "in fondo alla tabella: **ogni modifica viene salvata automaticamente**. "
-        "La colonna **Stato** (🔴/🟢) è automatica."
+        "La colonna **Stato** (🔴/🟢) puoi impostarla tu manualmente; se la lasci vuota "
+        "viene calcolata in automatico. Date nel formato **GG-MM-AAAA**."
     )
 
     # Tabella completamente editabile (tutti i campi tranne l'ID, che resta
     # nascosto ma serve internamente per identificare i record).
     df_edit = df_filtrato.reset_index(drop=True).copy()
 
-    # Colonna "Stato" visiva: pallino rosso per record critici, verde per gli altri.
-    df_edit.insert(
-        0,
-        "stato_visivo",
-        df_edit.apply(
-            lambda r: "🔴"
-            if (is_valore_critico(r["data_consegna_kit"]) or is_valore_critico(r["stato_sts"]))
-            else "🟢",
-            axis=1,
-        ),
-    )
+    # Colonna "Stato" visiva: usa la classificazione manuale se impostata,
+    # altrimenti calcola in automatico (rosso se critico, verde altrimenti).
+    def _pallino(r):
+        cls = str(r.get("classificazione") or "").strip()
+        if cls in ("🟢", "🔴"):
+            return cls
+        critico = is_valore_critico(r.get("data_consegna_kit")) or is_valore_critico(r.get("stato_sts"))
+        return "🔴" if critico else "🟢"
+
+    df_edit.insert(0, "stato_visivo", df_edit.apply(_pallino, axis=1))
 
     # Chiave dinamica dell'editor: si rigenera dopo ogni salvataggio automatico
     # per azzerare lo stato interno del widget ed evitare inserimenti duplicati.
@@ -734,20 +753,20 @@ def sezione_read(df: pd.DataFrame):
             "stato_visivo",
         ],
         column_config={
-            "stato_visivo": st.column_config.TextColumn(
-                "Stato", disabled=True, width="small",
-                help="🔴 = da attenzionare · 🟢 = regolare",
+            "stato_visivo": st.column_config.SelectboxColumn(
+                "Stato", options=["🟢", "🔴"], width="small",
+                help="Classifica manualmente: 🔴 da attenzionare · 🟢 regolare",
             ),
             "sistema": st.column_config.TextColumn("Sistema", required=True),
             "iniziativa": st.column_config.TextColumn("Iniziativa"),
             "data_inizio_certificazione": st.column_config.TextColumn(
-                "Inizio Cert.", help="Formato AAAA-MM-GG o testo"
+                "Inizio Cert.", help="Formato GG-MM-AAAA o testo"
             ),
             "data_fine_certificazione": st.column_config.TextColumn(
-                "Fine Cert.", help="Formato AAAA-MM-GG o testo"
+                "Fine Cert.", help="Formato GG-MM-AAAA o testo"
             ),
             "data_consegna_kit": st.column_config.TextColumn(
-                "Consegna Kit", help="Data (AAAA-MM-GG) o testo (es. 'Kit non consegnato')"
+                "Consegna Kit", help="Data (GG-MM-AAAA) o testo (es. 'Kit non consegnato')"
             ),
             "stato_sts": st.column_config.SelectboxColumn(
                 "Stato STS", options=STATI_STS
@@ -796,6 +815,8 @@ def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFr
     for _, riga in df_modificato.iterrows():
         rid = riga.get("id")
         dati = {c: ("" if pd.isna(riga.get(c)) else str(riga.get(c))) for c in campi}
+        # La colonna 'stato_visivo' (pallino) viene salvata come classificazione manuale.
+        dati["classificazione"] = "" if pd.isna(riga.get("stato_visivo")) else str(riga.get("stato_visivo"))
 
         if pd.isna(rid) or str(rid).strip() == "":
             # Riga nuova: inserisci solo se e' stato indicato almeno il Sistema.
@@ -803,10 +824,10 @@ def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFr
                 inserisci_sistema(dati)
                 n_nuovi += 1
         else:
-            # Riga esistente: aggiorna solo se qualche campo e' cambiato.
+            # Riga esistente: aggiorna se un campo o la classificazione sono cambiati.
             riga_old = orig_by_id.get(int(rid))
             if riga_old is not None and any(
-                str(riga.get(c)) != str(riga_old[c]) for c in campi
+                str(riga.get(c)) != str(riga_old[c]) for c in campi + ["stato_visivo"]
             ):
                 aggiorna_sistema(int(rid), dati)
                 n_aggiornati += 1
@@ -833,7 +854,7 @@ def sezione_create():
             )
             if tipo_kit == "Data specifica":
                 data_kit_valore = st.date_input("Data Consegna Kit", value=date.today())
-                data_consegna_kit = data_kit_valore.isoformat()
+                data_consegna_kit = data_kit_valore.strftime("%d-%m-%Y")
             else:
                 data_consegna_kit = st.selectbox("Stato Consegna Kit", STATI_KIT)
             note = st.text_area("Note", placeholder="Annotazioni opzionali...")
@@ -852,8 +873,8 @@ def sezione_create():
         dati = {
             "sistema": sistema.strip(),
             "iniziativa": iniziativa.strip(),
-            "data_inizio_certificazione": data_inizio.isoformat(),
-            "data_fine_certificazione": data_fine.isoformat(),
+            "data_inizio_certificazione": data_inizio.strftime("%d-%m-%Y"),
+            "data_fine_certificazione": data_fine.strftime("%d-%m-%Y"),
             "data_consegna_kit": data_consegna_kit,
             "stato_sts": stato_sts,
             "note": note.strip(),
@@ -907,7 +928,7 @@ def sezione_update(df: pd.DataFrame):
             if tipo_kit == "Data specifica":
                 data_kit_val = parse_data(kit_corrente) or date.today()
                 data_kit_input = st.date_input("Data Consegna Kit", value=data_kit_val)
-                data_consegna_kit = data_kit_input.isoformat()
+                data_consegna_kit = data_kit_input.strftime("%d-%m-%Y")
             else:
                 idx_kit = STATI_KIT.index(kit_corrente) if kit_corrente in STATI_KIT else 0
                 data_consegna_kit = st.selectbox("Stato Consegna Kit", STATI_KIT, index=idx_kit)
@@ -927,11 +948,12 @@ def sezione_update(df: pd.DataFrame):
         dati = {
             "sistema": sistema.strip(),
             "iniziativa": iniziativa.strip(),
-            "data_inizio_certificazione": data_inizio.isoformat(),
-            "data_fine_certificazione": data_fine.isoformat(),
+            "data_inizio_certificazione": data_inizio.strftime("%d-%m-%Y"),
+            "data_fine_certificazione": data_fine.strftime("%d-%m-%Y"),
             "data_consegna_kit": data_consegna_kit,
             "stato_sts": stato_sts,
             "note": note.strip(),
+            "classificazione": record["classificazione"] if "classificazione" in record else "",
         }
         aggiorna_sistema(int(record_id), dati)
         st.success(f"Sistema '{sistema}' aggiornato con successo!")
