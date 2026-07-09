@@ -689,8 +689,8 @@ def sezione_read(df: pd.DataFrame):
 
     st.caption(
         "✏️ Modifica le celle **oppure aggiungi nuove righe** con il pulsante **+** "
-        "in fondo alla tabella, poi premi **Salva modifiche** per aggiornare il database. "
-        "La colonna **Stato** (🔴/🟢) è automatica: compare da sola dopo il salvataggio."
+        "in fondo alla tabella: **ogni modifica viene salvata automaticamente**. "
+        "La colonna **Stato** (🔴/🟢) è automatica."
     )
 
     # Tabella completamente editabile (tutti i campi tranne l'ID, che resta
@@ -709,13 +709,18 @@ def sezione_read(df: pd.DataFrame):
         ),
     )
 
+    # Chiave dinamica dell'editor: si rigenera dopo ogni salvataggio automatico
+    # per azzerare lo stato interno del widget ed evitare inserimenti duplicati.
+    if "editor_rev" not in st.session_state:
+        st.session_state.editor_rev = 0
+
     tabella_modificata = st.data_editor(
         df_edit,
         use_container_width=True,
         hide_index=True,
         height=430,
         num_rows="dynamic",
-        key="editor_certificazioni",
+        key=f"editor_certificazioni_{st.session_state.editor_rev}",
         # column_order esclude 'id' e mette lo Stato (automatico) in fondo,
         # cosi' la compilazione di una nuova riga parte dal campo 'Sistema'.
         column_order=[
@@ -751,22 +756,17 @@ def sezione_read(df: pd.DataFrame):
         },
     )
 
-    col_save, col_info = st.columns([1, 3])
-    with col_save:
-        if st.button("💾 Salva modifiche", type="primary"):
-            n_agg, n_new = salva_modifiche_tabella(df_edit, tabella_modificata)
-            if n_agg or n_new:
-                messaggi = []
-                if n_new:
-                    messaggi.append(f"{n_new} nuovi sistemi aggiunti")
-                if n_agg:
-                    messaggi.append(f"{n_agg} record aggiornati")
-                st.success(" · ".join(messaggi) + ".")
-                st.rerun()
-            else:
-                st.info("Nessuna modifica da salvare.")
-    with col_info:
-        st.caption(f"Visualizzati {len(df_filtrato)} di {len(df)} sistemi totali.")
+    # Salvataggio automatico: appena una cella o una riga viene modificata,
+    # la variazione viene subito scritta nel database.
+    n_agg, n_new = salva_modifiche_tabella(df_edit, tabella_modificata)
+    if n_agg or n_new:
+        st.session_state.editor_rev += 1
+        st.rerun()
+
+    st.caption(
+        f"Visualizzati {len(df_filtrato)} di {len(df)} sistemi totali · "
+        "💾 salvataggio automatico attivo."
+    )
 
 
 def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFrame):
@@ -985,23 +985,8 @@ def main():
     # Caricamento dati.
     df = leggi_sistemi()
 
-    # KPI di sintesi.
-    render_kpi(df)
-    st.write("")  # spaziatura
-
-    # --- Sidebar: creazione rapida ---
+    # --- Sidebar ---
     with st.sidebar:
-        st.markdown(
-            f'<div class="section-title">Menu Rapido</div>', unsafe_allow_html=True
-        )
-        st.markdown(
-            "Utilizza i tab principali per gestire i sistemi:\n\n"
-            "- **Elenco**: visualizza e filtra\n"
-            "- **Aggiungi**: inserisci nuovi sistemi\n"
-            "- **Modifica**: aggiorna i dati\n"
-            "- **Elimina**: rimuovi record"
-        )
-        st.divider()
         st.metric("Record nel Database", len(df))
         st.caption(f"Database: `{os.path.basename(DB_PATH)}`")
 
