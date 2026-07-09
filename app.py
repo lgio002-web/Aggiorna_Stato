@@ -96,7 +96,7 @@ DATI_MOCKUP = [
         "data_inizio_certificazione": "2026-06-22",
         "data_fine_certificazione": "2026-07-10",
         "data_consegna_kit": "Kit non consegnato",
-        "stato_sts": "Ripianificato",
+        "stato_sts": "",
         "note": "Ripianificato",
     },
     {
