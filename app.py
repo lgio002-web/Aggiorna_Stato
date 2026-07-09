@@ -673,8 +673,8 @@ def sezione_read(df: pd.DataFrame):
         return
 
     st.caption(
-        "✏️ Modifica direttamente le celle della tabella, poi premi "
-        "**Salva modifiche** per aggiornare il database."
+        "✏️ Modifica le celle **oppure aggiungi nuove righe** con il pulsante **+** "
+        "in fondo alla tabella, poi premi **Salva modifiche** per aggiornare il database."
     )
 
     # Tabella completamente editabile (tutti i campi tranne l'ID, che resta
@@ -698,7 +698,7 @@ def sezione_read(df: pd.DataFrame):
         use_container_width=True,
         hide_index=True,
         height=430,
-        num_rows="fixed",
+        num_rows="dynamic",
         key="editor_certificazioni",
         # column_order esclude 'id' dalla visualizzazione (resta nel DataFrame).
         column_order=[
@@ -737,9 +737,14 @@ def sezione_read(df: pd.DataFrame):
     col_save, col_info = st.columns([1, 3])
     with col_save:
         if st.button("💾 Salva modifiche", type="primary"):
-            n_aggiornati = salva_modifiche_tabella(df_edit, tabella_modificata)
-            if n_aggiornati:
-                st.success(f"{n_aggiornati} record aggiornati con successo.")
+            n_agg, n_new = salva_modifiche_tabella(df_edit, tabella_modificata)
+            if n_agg or n_new:
+                messaggi = []
+                if n_new:
+                    messaggi.append(f"{n_new} nuovi sistemi aggiunti")
+                if n_agg:
+                    messaggi.append(f"{n_agg} record aggiornati")
+                st.success(" · ".join(messaggi) + ".")
                 st.rerun()
             else:
                 st.info("Nessuna modifica da salvare.")
@@ -747,9 +752,12 @@ def sezione_read(df: pd.DataFrame):
         st.caption(f"Visualizzati {len(df_filtrato)} di {len(df)} sistemi totali.")
 
 
-def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFrame) -> int:
-    """Confronta la tabella originale con quella modificata e aggiorna i record
-    cambiati nel database. Restituisce il numero di record aggiornati."""
+def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFrame):
+    """Salva le modifiche della tabella nel database.
+
+    - Le righe esistenti (con ID) vengono aggiornate se cambiate.
+    - Le righe nuove (senza ID, aggiunte dall'utente) vengono inserite.
+    Restituisce una tupla (n_aggiornati, n_nuovi)."""
     campi = [
         "sistema",
         "iniziativa",
@@ -759,16 +767,33 @@ def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFr
         "stato_sts",
         "note",
     ]
+    # Indicizza le righe originali per ID per un confronto rapido.
+    orig_by_id = {
+        int(r["id"]): r
+        for _, r in df_originale.iterrows()
+        if not pd.isna(r["id"])
+    }
+
     n_aggiornati = 0
-    for i in range(len(df_modificato)):
-        riga_new = df_modificato.iloc[i]
-        riga_old = df_originale.iloc[i]
-        # Aggiorna solo se almeno un campo e' cambiato.
-        if any(str(riga_new[c]) != str(riga_old[c]) for c in campi):
-            dati = {c: ("" if pd.isna(riga_new[c]) else str(riga_new[c])) for c in campi}
-            aggiorna_sistema(int(riga_new["id"]), dati)
-            n_aggiornati += 1
-    return n_aggiornati
+    n_nuovi = 0
+    for _, riga in df_modificato.iterrows():
+        rid = riga.get("id")
+        dati = {c: ("" if pd.isna(riga.get(c)) else str(riga.get(c))) for c in campi}
+
+        if pd.isna(rid) or str(rid).strip() == "":
+            # Riga nuova: inserisci solo se e' stato indicato almeno il Sistema.
+            if dati["sistema"].strip():
+                inserisci_sistema(dati)
+                n_nuovi += 1
+        else:
+            # Riga esistente: aggiorna solo se qualche campo e' cambiato.
+            riga_old = orig_by_id.get(int(rid))
+            if riga_old is not None and any(
+                str(riga.get(c)) != str(riga_old[c]) for c in campi
+            ):
+                aggiorna_sistema(int(rid), dati)
+                n_aggiornati += 1
+    return n_aggiornati, n_nuovi
 
 
 def sezione_create():
