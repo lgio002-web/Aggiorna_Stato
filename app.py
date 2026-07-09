@@ -563,6 +563,21 @@ def inietta_css():
             background: #ffffff;
             border-right: 3px solid {POSTE_GIALLO};
         }}
+        /* Testo della sidebar sempre scuro e leggibile sul fondo bianco. */
+        [data-testid="stSidebar"] * {{
+            color: #1f2937 !important;
+        }}
+        [data-testid="stSidebar"] .section-title {{
+            color: {POSTE_BLU} !important;
+        }}
+        [data-testid="stSidebar"] strong,
+        [data-testid="stSidebar"] b {{
+            color: {POSTE_BLU} !important;
+        }}
+        /* Valore delle metriche (numero grande) in blu istituzionale. */
+        [data-testid="stSidebar"] [data-testid="stMetricValue"] {{
+            color: {POSTE_BLU} !important;
+        }}
 
         /* --- Footer --- */
         .poste-footer {{
