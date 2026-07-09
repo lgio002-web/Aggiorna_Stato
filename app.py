@@ -677,8 +677,22 @@ def sezione_read(df: pd.DataFrame):
         "**Salva modifiche** per aggiornare il database."
     )
 
-    # Tabella completamente editabile (tutti i campi tranne l'ID).
-    df_edit = df_filtrato.reset_index(drop=True)
+    # Tabella completamente editabile (tutti i campi tranne l'ID, che resta
+    # nascosto ma serve internamente per identificare i record).
+    df_edit = df_filtrato.reset_index(drop=True).copy()
+
+    # Colonna "Stato" visiva: pallino rosso per record critici, verde per gli altri.
+    df_edit.insert(
+        0,
+        "stato_visivo",
+        df_edit.apply(
+            lambda r: "🔴"
+            if (is_valore_critico(r["data_consegna_kit"]) or is_valore_critico(r["stato_sts"]))
+            else "🟢",
+            axis=1,
+        ),
+    )
+
     tabella_modificata = st.data_editor(
         df_edit,
         use_container_width=True,
@@ -686,8 +700,22 @@ def sezione_read(df: pd.DataFrame):
         height=430,
         num_rows="fixed",
         key="editor_certificazioni",
+        # column_order esclude 'id' dalla visualizzazione (resta nel DataFrame).
+        column_order=[
+            "stato_visivo",
+            "sistema",
+            "iniziativa",
+            "data_inizio_certificazione",
+            "data_fine_certificazione",
+            "data_consegna_kit",
+            "stato_sts",
+            "note",
+        ],
         column_config={
-            "id": st.column_config.NumberColumn("ID", disabled=True, width="small"),
+            "stato_visivo": st.column_config.TextColumn(
+                "Stato", disabled=True, width="small",
+                help="🔴 = da attenzionare · 🟢 = regolare",
+            ),
             "sistema": st.column_config.TextColumn("Sistema", required=True),
             "iniziativa": st.column_config.TextColumn("Iniziativa"),
             "data_inizio_certificazione": st.column_config.TextColumn(
