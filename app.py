@@ -241,6 +241,20 @@ def elimina_sistema(record_id: int):
     conn.close()
 
 
+def svuota_database():
+    """Elimina definitivamente TUTTI i record dal database.
+
+    Utile per ripulire dati di esempio residui (es. sull'istanza cloud) e
+    ripartire da zero. Il database resta vuoto finche' non si inseriscono
+    nuovi record (nessun ricaricamento automatico di dati di esempio)."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM sistemi")
+    cur.execute("DELETE FROM sqlite_sequence WHERE name = 'sistemi'")
+    conn.commit()
+    conn.close()
+
+
 # ============================================================================
 # 3. FUNZIONI DI SUPPORTO (parsing date, formattazione)
 # ============================================================================
@@ -841,6 +855,19 @@ def main():
     with st.sidebar:
         st.metric("Record nel Database", len(df))
         st.caption(f"Database: `{os.path.basename(DB_PATH)}`")
+
+        st.divider()
+        st.markdown("**Svuota database**")
+        st.caption(
+            "Elimina definitivamente TUTTI i record (utile per rimuovere "
+            "vecchi dati di esempio). Dopo lo svuotamento il database resta "
+            "vuoto: inserisci tu i tuoi record."
+        )
+        conferma_svuota = st.checkbox("Confermo: elimina tutti i record")
+        if st.button("🗑️ Svuota tutto il database", disabled=not conferma_svuota):
+            svuota_database()
+            st.success("Database svuotato. Ora puoi inserire i tuoi record.")
+            st.rerun()
 
     # --- Tabs principali per il CRUD ---
     tab_read, tab_create, tab_update, tab_delete = st.tabs(
