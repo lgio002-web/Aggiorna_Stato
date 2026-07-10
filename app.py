@@ -102,6 +102,20 @@ def init_db():
         cur.execute("ALTER TABLE sistemi ADD COLUMN classificazione TEXT DEFAULT ''")
         conn.commit()
 
+    # Tabella per la tracciatura degli accessi/visite (analytics).
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS accessi (
+            id           INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp    TEXT,
+            ip           TEXT,
+            user_agent   TEXT,
+            piattaforma  TEXT
+        )
+        """
+    )
+    conn.commit()
+
     # Popolamento iniziale con i dati di mockup se la tabella e' vuota.
     cur.execute("SELECT COUNT(*) AS n FROM sistemi")
     if cur.fetchone()["n"] == 0:
@@ -256,8 +270,74 @@ def svuota_database():
 
 
 # ============================================================================
-# 3. FUNZIONI DI SUPPORTO (parsing date, formattazione)
+# 3. FUNZIONI DI SUPPORTO (parsing date, formattazione, tracciatura)
 # ============================================================================
+
+def rileva_piattaforma(user_agent: str) -> str:
+    """Deduce la piattaforma/sistema operativo dal campo User-Agent."""
+    ua = (user_agent or "").lower()
+    if "iphone" in ua:
+        return "iPhone"
+    if "ipad" in ua:
+        return "iPad"
+    if "android" in ua:
+        return "Android"
+    if "windows" in ua:
+        return "Windows"
+    if "macintosh" in ua or "mac os" in ua:
+        return "Mac"
+    if "cros" in ua:
+        return "ChromeOS"
+    if "linux" in ua:
+        return "Linux"
+    return "Altro"
+
+
+def info_client():
+    """Ricava (ip, user_agent, piattaforma) del client dalla richiesta HTTP.
+
+    Usa gli header esposti da Streamlit. Dietro proxy/cloud l'IP reale e' in
+    'X-Forwarded-For'. Se non disponibile, restituisce valori di fallback."""
+    ip = "sconosciuto"
+    ua = ""
+    try:
+        headers = dict(st.context.headers or {})
+        # Gli header sono case-insensitive: normalizziamo le chiavi.
+        headers = {k.lower(): v for k, v in headers.items()}
+        ua = headers.get("user-agent", "") or ""
+        xff = headers.get("x-forwarded-for", "")
+        if xff:
+            ip = xff.split(",")[0].strip()
+        elif headers.get("x-real-ip"):
+            ip = headers["x-real-ip"].strip()
+    except Exception:
+        pass
+    return ip, ua, rileva_piattaforma(ua)
+
+
+def registra_accesso():
+    """Registra un accesso una sola volta per sessione utente."""
+    if st.session_state.get("_accesso_registrato"):
+        return
+    ip, ua, piattaforma = info_client()
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO accessi (timestamp, ip, user_agent, piattaforma) VALUES (?, ?, ?, ?)",
+        (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), ip, ua, piattaforma),
+    )
+    conn.commit()
+    conn.close()
+    st.session_state._accesso_registrato = True
+
+
+def leggi_accessi() -> pd.DataFrame:
+    """Restituisce tutti gli accessi registrati come DataFrame."""
+    conn = get_connection()
+    df = pd.read_sql_query("SELECT * FROM accessi ORDER BY id DESC", conn)
+    conn.close()
+    return df
+
 
 def parse_data(valore: str):
     """Prova a convertire una stringa in oggetto date.
@@ -303,6 +383,19 @@ def inietta_css():
         /* --- Sfondo generale elegante --- */
         .stApp {{
             background: linear-gradient(180deg, #f4f6fb 0%, #eaeef7 100%);
+        }}
+
+        /* --- Larghezza pagina: usa tutto lo spazio disponibile --- */
+        .block-container {{
+            max-width: 100% !important;
+            padding-left: 2.2rem !important;
+            padding-right: 2.2rem !important;
+            padding-top: 2rem !important;
+        }}
+        /* Consenti lo scroll orizzontale della tabella quando serve. */
+        [data-testid="stDataFrame"], [data-testid="stDataEditor"] {{
+            width: 100% !important;
+            overflow-x: auto !important;
         }}
 
         /* --- Header brandizzato Poste Italiane --- */
@@ -506,52 +599,34 @@ def evidenzia_righe(row: pd.Series):
 
 
 def sezione_read(df: pd.DataFrame):
-    """READ + EDIT: tabella globale editabile con filtri e salvataggio su DB.
+    """READ + EDIT: unica tabella editabile con salvataggio automatico su DB.
 
     Tutti i campi sono modificabili direttamente nella tabella (tranne l'ID,
-    che identifica il record). Le modifiche vengono salvate nel database
-    premendo il pulsante 'Salva modifiche'."""
+    che identifica il record). I record "verdi" vengono mostrati per primi,
+    ordinati per data di consegna kit dal piu' recente. Le colonne sono
+    ordinabili/filtrabili cliccando sull'intestazione."""
     st.markdown('<div class="section-title">Elenco Certificazioni</div>', unsafe_allow_html=True)
 
-    # Filtri rapidi in cima.
-    col_f1, col_f2 = st.columns([2, 1])
-    with col_f1:
-        ricerca = st.text_input(
-            "🔎 Cerca per Sistema o Iniziativa",
-            placeholder="Es: Corriere, GPL, 143248...",
+    if df.empty:
+        st.info("Nessun record presente. Aggiungi una riga con il pulsante **+** in fondo alla tabella.")
+        # Mostra comunque un editor vuoto per consentire l'inserimento.
+        df = pd.DataFrame(
+            columns=[
+                "id", "sistema", "iniziativa", "data_inizio_certificazione",
+                "data_fine_certificazione", "data_consegna_kit", "stato_sts",
+                "note", "classificazione",
+            ]
         )
-    with col_f2:
-        stati_disponibili = ["Tutti"] + sorted(df["stato_sts"].dropna().unique().tolist())
-        filtro_stato = st.selectbox("Filtra per Stato STS", stati_disponibili)
-
-    # Applicazione dei filtri.
-    df_filtrato = df.copy()
-    if ricerca:
-        maschera = (
-            df_filtrato["sistema"].str.contains(ricerca, case=False, na=False)
-            | df_filtrato["iniziativa"].str.contains(ricerca, case=False, na=False)
-        )
-        df_filtrato = df_filtrato[maschera]
-    if filtro_stato != "Tutti":
-        df_filtrato = df_filtrato[df_filtrato["stato_sts"] == filtro_stato]
-
-    if df_filtrato.empty:
-        st.info("Nessun record corrisponde ai criteri di ricerca selezionati.")
-        return
 
     st.caption(
         "✏️ Modifica le celle **oppure aggiungi nuove righe** con il pulsante **+** "
         "in fondo alla tabella: **ogni modifica viene salvata automaticamente**. "
         "La colonna **Stato** (🔴/🟢) puoi impostarla tu manualmente; se la lasci vuota "
-        "viene calcolata in automatico. Date nel formato **GG-MM-AAAA**."
+        "viene calcolata in automatico. Clicca sull'intestazione di una colonna per "
+        "**ordinare/filtrare** (testo e date). Date nel formato **GG-MM-AAAA**."
     )
 
-    # Tabella completamente editabile (tutti i campi tranne l'ID, che resta
-    # nascosto ma serve internamente per identificare i record).
-    df_edit = df_filtrato.reset_index(drop=True).copy()
-
-    # Colonna "Stato" visiva: usa la classificazione manuale se impostata,
-    # altrimenti calcola in automatico (rosso se critico, verde altrimenti).
+    # --- Calcolo del pallino (verde/rosso) per ogni riga ---
     def _pallino(r):
         cls = str(r.get("classificazione") or "").strip()
         if cls in ("🟢", "🔴"):
@@ -559,7 +634,31 @@ def sezione_read(df: pd.DataFrame):
         critico = is_valore_critico(r.get("data_consegna_kit")) or is_valore_critico(r.get("stato_sts"))
         return "🔴" if critico else "🟢"
 
-    df_edit.insert(0, "stato_visivo", df_edit.apply(_pallino, axis=1))
+    df_ord = df.copy().reset_index(drop=True)
+    df_ord["stato_visivo"] = df_ord.apply(_pallino, axis=1)
+    # Chiave di ordinamento sulla data di consegna kit (le righe senza data
+    # valida finiscono in fondo tra i verdi).
+    df_ord["_kit_dt"] = df_ord["data_consegna_kit"].apply(
+        lambda v: parse_data(v) or date.min
+    )
+    # I verdi (0) prima dei rossi (1); tra i verdi, data consegna kit decrescente.
+    df_ord["_is_rosso"] = (df_ord["stato_visivo"] == "🔴").astype(int)
+    df_ord = df_ord.sort_values(
+        by=["_is_rosso", "_kit_dt"], ascending=[True, False], kind="stable"
+    ).reset_index(drop=True)
+    df_ord = df_ord.drop(columns=["_kit_dt", "_is_rosso"])
+
+    # Colonna con la numerazione progressiva delle righe.
+    df_ord.insert(0, "n_riga", range(1, len(df_ord) + 1))
+
+    # Le due colonne pienamente "data" vengono convertite a datetime cosi'
+    # l'ordinamento avviene cronologicamente (non alfabeticamente).
+    for col in ("data_inizio_certificazione", "data_fine_certificazione"):
+        df_ord[col] = df_ord[col].apply(
+            lambda v: (pd.Timestamp(parse_data(v)) if parse_data(v) else pd.NaT)
+        )
+
+    df_edit = df_ord
 
     # Chiave dinamica dell'editor: si rigenera dopo ogni salvataggio automatico
     # per azzerare lo stato interno del widget ed evitare inserimenti duplicati.
@@ -570,11 +669,12 @@ def sezione_read(df: pd.DataFrame):
         df_edit,
         use_container_width=True,
         hide_index=True,
-        height=430,
+        height=760,
         num_rows="dynamic",
         key=f"editor_certificazioni_{st.session_state.editor_rev}",
-        # column_order esclude 'id' e mette lo Stato come prima colonna.
+        # column_order esclude 'id' e mette N. e Stato come prime colonne.
         column_order=[
+            "n_riga",
             "stato_visivo",
             "sistema",
             "iniziativa",
@@ -585,25 +685,29 @@ def sezione_read(df: pd.DataFrame):
             "note",
         ],
         column_config={
+            "n_riga": st.column_config.NumberColumn(
+                "N.", width="small", disabled=True, help="Numero progressivo di riga"
+            ),
             "stato_visivo": st.column_config.SelectboxColumn(
                 "Stato", options=["🟢", "🔴"], width="small",
                 help="Classifica manualmente: 🔴 da attenzionare · 🟢 regolare",
             ),
-            "sistema": st.column_config.TextColumn("Sistema", required=True),
-            "iniziativa": st.column_config.TextColumn("Iniziativa"),
-            "data_inizio_certificazione": st.column_config.TextColumn(
-                "Inizio Cert.", help="Formato GG-MM-AAAA o testo"
+            "sistema": st.column_config.TextColumn("Sistema", required=True, width="medium"),
+            "iniziativa": st.column_config.TextColumn("Iniziativa", width="medium"),
+            "data_inizio_certificazione": st.column_config.DateColumn(
+                "Inizio Cert.", format="DD-MM-YYYY", help="Ordinabile per data"
             ),
-            "data_fine_certificazione": st.column_config.TextColumn(
-                "Fine Cert.", help="Formato GG-MM-AAAA o testo"
+            "data_fine_certificazione": st.column_config.DateColumn(
+                "Fine Cert.", format="DD-MM-YYYY", help="Ordinabile per data"
             ),
             "data_consegna_kit": st.column_config.TextColumn(
-                "Consegna Kit", help="Data (GG-MM-AAAA) o testo (es. 'Kit non consegnato')"
+                "Consegna Kit", width="medium",
+                help="Data (GG-MM-AAAA) o testo (es. 'Kit non consegnato')"
             ),
             "stato_sts": st.column_config.SelectboxColumn(
                 "Stato STS", options=STATI_STS
             ),
-            "note": st.column_config.TextColumn("Note"),
+            "note": st.column_config.TextColumn("Note", width="large"),
         },
     )
 
@@ -615,8 +719,8 @@ def sezione_read(df: pd.DataFrame):
         st.rerun()
 
     st.caption(
-        f"Visualizzati {len(df_filtrato)} di {len(df)} sistemi totali · "
-        "💾 salvataggio automatico attivo."
+        f"Totale: {len(df_edit)} sistemi · 💾 salvataggio automatico attivo · "
+        "🟢 verdi ordinati per data consegna kit (dal piu' recente)."
     )
 
 
@@ -643,12 +747,25 @@ def salva_modifiche_tabella(df_originale: pd.DataFrame, df_modificato: pd.DataFr
         if not pd.isna(r["id"])
     }
 
+    def _fmt(campo, valore):
+        """Normalizza il valore di una cella in stringa per il salvataggio.
+
+        Le colonne data (datetime dall'editor) vengono formattate GG-MM-AAAA."""
+        if valore is None or (not isinstance(valore, str) and pd.isna(valore)):
+            return ""
+        if campo in ("data_inizio_certificazione", "data_fine_certificazione"):
+            if isinstance(valore, (pd.Timestamp, datetime, date)):
+                return valore.strftime("%d-%m-%Y")
+            d = parse_data(valore)
+            return d.strftime("%d-%m-%Y") if d else str(valore)
+        return str(valore)
+
     n_aggiornati = 0
     n_nuovi = 0
     id_presenti = set()
     for _, riga in df_modificato.iterrows():
         rid = riga.get("id")
-        dati = {c: ("" if pd.isna(riga.get(c)) else str(riga.get(c))) for c in campi}
+        dati = {c: _fmt(c, riga.get(c)) for c in campi}
         # La colonna 'stato_visivo' (pallino) viene salvata come classificazione manuale.
         dati["classificazione"] = "" if pd.isna(riga.get("stato_visivo")) else str(riga.get("stato_visivo"))
 
@@ -830,6 +947,53 @@ def sezione_delete(df: pd.DataFrame):
         st.rerun()
 
 
+def render_statistiche_accessi():
+    """Menu nascosto in basso: statistiche di visita/accesso.
+
+    Cliccando sull'expander si "esplodono" i dati di tracciatura: numero di
+    accessi totali, visitatori univoci (per IP) e dettaglio per piattaforma
+    (Windows, Mac, Android, iPhone, ...)."""
+    st.markdown("<div style='height:26px'></div>", unsafe_allow_html=True)
+    with st.expander("· · ·  Statistiche accessi (riservato)"):
+        df_acc = leggi_accessi()
+
+        if df_acc.empty:
+            st.info("Nessun accesso registrato finora.")
+            return
+
+        totale = len(df_acc)
+        ip_validi = df_acc[df_acc["ip"] != "sconosciuto"]["ip"]
+        univoci = ip_validi.nunique()
+        # Se nessun IP e' rilevabile (es. esecuzione locale) mostriamo almeno
+        # il numero di sessioni distinte come approssimazione.
+        if univoci == 0:
+            univoci = totale
+
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Accessi totali", totale)
+        c2.metric("Visitatori univoci (IP)", univoci)
+        c3.metric("Piattaforme diverse", df_acc["piattaforma"].nunique())
+
+        st.markdown("**Accessi per piattaforma**")
+        per_piatt = (
+            df_acc.groupby("piattaforma")
+            .agg(
+                accessi=("id", "count"),
+                ip_univoci=("ip", lambda s: s[s != "sconosciuto"].nunique()),
+            )
+            .reset_index()
+            .sort_values("accessi", ascending=False)
+        )
+        per_piatt.columns = ["Piattaforma", "Accessi", "IP univoci"]
+        st.dataframe(per_piatt, use_container_width=True, hide_index=True)
+        st.bar_chart(per_piatt.set_index("Piattaforma")["Accessi"])
+
+        st.markdown("**Ultimi accessi**")
+        recenti = df_acc[["timestamp", "piattaforma", "ip"]].head(15).copy()
+        recenti.columns = ["Data/Ora", "Piattaforma", "IP"]
+        st.dataframe(recenti, use_container_width=True, hide_index=True)
+
+
 # ============================================================================
 # 6. FUNZIONE PRINCIPALE
 # ============================================================================
@@ -840,48 +1004,24 @@ def main():
         page_title="Dashboard Certificazioni - Poste Italiane",
         page_icon="📮",
         layout="wide",
-        initial_sidebar_state="expanded",
+        initial_sidebar_state="collapsed",
     )
 
     # Inizializzazione DB e stile.
     init_db()
     inietta_css()
+    # Registra l'accesso (una volta per sessione) per le statistiche di visita.
+    registra_accesso()
     render_header()
 
     # Caricamento dati.
     df = leggi_sistemi()
 
-    # --- Sidebar ---
-    with st.sidebar:
-        st.metric("Record nel Database", len(df))
-        st.caption(f"Database: `{os.path.basename(DB_PATH)}`")
+    # --- Unica vista: elenco editabile (nessun menu rapido, nessuna sidebar) ---
+    sezione_read(df)
 
-        st.divider()
-        st.markdown("**Svuota database**")
-        st.caption(
-            "Elimina definitivamente TUTTI i record (utile per rimuovere "
-            "vecchi dati di esempio). Dopo lo svuotamento il database resta "
-            "vuoto: inserisci tu i tuoi record."
-        )
-        conferma_svuota = st.checkbox("Confermo: elimina tutti i record")
-        if st.button("🗑️ Svuota tutto il database", disabled=not conferma_svuota):
-            svuota_database()
-            st.success("Database svuotato. Ora puoi inserire i tuoi record.")
-            st.rerun()
-
-    # --- Tabs principali per il CRUD ---
-    tab_read, tab_create, tab_update, tab_delete = st.tabs(
-        ["📋 Elenco", "➕ Aggiungi Sistema", "✏️ Modifica", "🗑️ Elimina"]
-    )
-
-    with tab_read:
-        sezione_read(df)
-    with tab_create:
-        sezione_create()
-    with tab_update:
-        sezione_update(df)
-    with tab_delete:
-        sezione_delete(df)
+    # --- Menu nascosto in basso con le statistiche di tracciatura ---
+    render_statistiche_accessi()
 
     # Footer.
     st.markdown(
