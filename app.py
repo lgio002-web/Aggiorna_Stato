@@ -641,10 +641,10 @@ def sezione_read(df: pd.DataFrame):
     df_ord["_kit_dt"] = df_ord["data_consegna_kit"].apply(
         lambda v: parse_data(v) or date.min
     )
-    # I verdi (0) prima dei rossi (1); tra i verdi, data consegna kit decrescente.
+    # I rossi prima dei verdi; tra i verdi, data consegna kit decrescente.
     df_ord["_is_rosso"] = (df_ord["stato_visivo"] == "🔴").astype(int)
     df_ord = df_ord.sort_values(
-        by=["_is_rosso", "_kit_dt"], ascending=[True, False], kind="stable"
+        by=["_is_rosso", "_kit_dt"], ascending=[False, False], kind="stable"
     ).reset_index(drop=True)
     df_ord = df_ord.drop(columns=["_kit_dt", "_is_rosso"])
 
@@ -720,7 +720,7 @@ def sezione_read(df: pd.DataFrame):
 
     st.caption(
         f"Totale: {len(df_edit)} sistemi · 💾 salvataggio automatico attivo · "
-        "🟢 verdi ordinati per data consegna kit (dal piu' recente)."
+        "� rossi in cima · �🟢 verdi ordinati per data consegna kit (dal piu' recente)."
     )
 
 
